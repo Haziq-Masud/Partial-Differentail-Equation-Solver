@@ -27,7 +27,8 @@ A = 0.0069191
 v_superficial = 0.16
 
 m = GEKKO()  # Defining Model for the equation
-m.time = np.linespace(0, 7200, 72000)
+m.time = np.linspace(0, 7200, 72000)
+print(len(m.time))
 t = m.Param(value=m.time)
 P = m.Var(value=1.07e5)
 T = m.Var(value=295.15)
@@ -41,10 +42,14 @@ qi_star = m.Const(value=5.501)
 Ci = m.Var(value=0)
 # Defining Value of ki leaving the concentration part
 constant_k1 = m.Const(value=(15 * epsilon_p * Dm) / (3 * (qi_star * rp ** 2)))
-# qi_star_qi = [m.Var(value=qi_star-qi) for ]
-m.Equation((1 / P * P.dt()) - (1 / T * T.dt()) == (-R * T / P) * ((1 - epsilon) / epsilon))
+changing_qi = np.linspace(18.0616, 10.83697, 72000)
+changing_qi = np.array(changing_qi)
+qi_star_qi = [m.Var(value=changing_qi[i]) for i in range(len(changing_qi))]
+# Writing model for the Given Equation
+m.Equation((1 / P * P.dt()) - (1 / T * T.dt()) == (-R * T / P) * ((1 - epsilon) / epsilon)*constant_k1*Ci*qi_star_qi)
 # 1/P x dP/dt = 1/P.dt()
 # 1/T x dP/dt = 1/T.dt()
+# constant_k1*Ci*qi_start_qi = ki(qi*-qi)
 m.options.imode = 4
 m.solve(disp=False)
 
