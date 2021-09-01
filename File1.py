@@ -45,3 +45,10 @@ constant_k1 = m.Const(value=(15 * epsilon_p * Dm) / (3 * (qi_star * rp ** 2)))
 m.Equation((1 / P * P.dt()) - (1 / T * T.dt()) == (-R * T / P) * ((1 - epsilon) / epsilon))
 # 1/P x dP/dt = 1/P.dt()
 # 1/T x dP/dt = 1/T.dt()
+m.options.imode = 4
+m.solve(disp=False)
+
+plt.plot(m.time, Ci.value)
+plt.xlabel(["Time"])
+plt.ylabel(["Concentration"])
+plt.show()
